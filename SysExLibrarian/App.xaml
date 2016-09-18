@@ -5,6 +5,28 @@
              xmlns:converters="clr-namespace:SysExLibrarian.Converters"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-        <converters:FileSizeConverter x:Key="FileSizeConverter" />
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Light.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.DeepPurple.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.Lime.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <converters:FileSizeConverter x:Key="FileSizeConverter" />
+			<!--<Style x:Key="SysExLibColumnHeader" 
+               BasedOn="{StaticResource MetroDataGridColumnHeader}" 
+               TargetType="{x:Type DataGridColumnHeader}">
+				<Setter Property="BorderThickness" Value="0 0 0 1" />
+				<Setter Property="controls:ControlsHelper.ContentCharacterCasing" Value="Normal"/>
+			</Style>-->
+            <Style x:Key="SysExLibMenuItem" 
+               BasedOn="{StaticResource MaterialDesignMenuItem}" 
+               TargetType="{x:Type MenuItem}">
+                <Setter Property="Padding" Value="0"></Setter>
+            </Style>
+            <Style x:Key="SysExLibMenu" BasedOn="{StaticResource MaterialDesignMenu}" TargetType="{x:Type MenuBase}">
+                <Setter Property="TextBlock.FontSize" Value="13"/>
+            </Style>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

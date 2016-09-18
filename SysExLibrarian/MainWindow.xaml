@@ -3,46 +3,95 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:local="clr-namespace:SysExLibrarian"
         mc:Ignorable="d"
-        Title="SysEx Librarian" Height="340" Width="838.4" ResizeMode="NoResize">
-
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="641*"/>
-            <ColumnDefinition Width="180*"/>
-            <ColumnDefinition Width="0*"/>
-        </Grid.ColumnDefinitions>
-        <DockPanel Grid.ColumnSpan="3">
-            <Menu Width="Auto" Height="20" DockPanel.Dock="Top">
-                <MenuItem Header="_SysEx Librarian">
-                    <MenuItem Header="_Exit" Click="MenuItem_Click"/>
-                </MenuItem>
-                <MenuItem Header="_Edit">
-                    <MenuItem Header="_Rename" x:Name="RenameMenuItem" IsEnabled="False" Click="RenameMenuItem_Click" />
-                    <MenuItem Header="_Show SysEx File" x:Name="ShowSysExFileMenuItem" IsEnabled="False" Click="ShowSysExFileMenuItem_Click" />
-                </MenuItem>
-                <MenuItem Header="_Help and Feedback">
-                    <MenuItem Header="_About" x:Name="AboutMenuItem" Click="AboutMenuItem_Click"/>
-                </MenuItem>
-            </Menu>
-            <StackPanel></StackPanel>
-        </DockPanel>
-        <DataGrid x:Name="SysExFilesDataGrid" RowHeaderWidth="0" CanUserAddRows="False" CanUserDeleteRows="False"  AutoGenerateColumns="False" 
-                  HorizontalAlignment="Left" Height="193" Margin="10,67,0,0" VerticalAlignment="Top" Width="812" Grid.ColumnSpan="2" 
-                  SelectionChanged="SysExFilesListView_SelectionChanged" CellEditEnding="SysExFilesDataGrid_CellEditEnding" CurrentCellChanged="SysExFilesDataGrid_CurrentCellChanged">
-            <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding FileName}" ClipboardContentBinding="{x:Null}" Header="Sysex File" Width="475"/>
-                <DataGridTextColumn Binding="{Binding Manufacturer}" ClipboardContentBinding="{x:Null}" Header="Manufacturer" IsReadOnly="True" Width="200"/>
-                <DataGridTextColumn Binding="{Binding Path=Size, Mode=OneWay, Converter={StaticResource FileSizeConverter}}" IsReadOnly="True" ClipboardContentBinding="{x:Null}" Header="Size"/>
-            </DataGrid.Columns>
-        </DataGrid>
-        <Button x:Name="AddFileButton" Content="Add File" HorizontalAlignment="Left" Margin="10,275,0,0" VerticalAlignment="Top" Width="75" Height="20" Click="AddFileButton_Click"/>
-        <Button x:Name="RemoveFileButton" Content="Remove File" HorizontalAlignment="Left" Margin="90,275,0,0" VerticalAlignment="Top" Width="75" Height="20" Click="RemoveFileButton_Click"/>
-        <Button x:Name="button_Copy1" Content="Contents" HorizontalAlignment="Left" Margin="99,275,0,0" VerticalAlignment="Top" Width="75" Height="20" Grid.Column="1"/>
-        <Button x:Name="button1" Content="Send" HorizontalAlignment="Left" Margin="17,26,0,0" VerticalAlignment="Top" Width="75" Height="22" Grid.Column="1"/>
-        <ComboBox x:Name="MidiOutputComboBox" HorizontalAlignment="Left" Margin="10,26,0,0" VerticalAlignment="Top" Width="400" IsReadOnly="true" Height="22"/>
-        <Button x:Name="button2" Content="Record" HorizontalAlignment="Left" Margin="97,26,0,0" VerticalAlignment="Top" Width="75" Height="22" Grid.Column="1"/>
-
-    </Grid>
+        WindowStartupLocation="CenterScreen"
+        Title="SysEx Librarian" Height="380" Width="838.4"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{StaticResource MaterialDesignFont}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Ideal" 
+        TextOptions.TextRenderingMode="Auto">
+    <materialDesign:DialogHost Identifier="RootDialog">
+        <Grid VerticalAlignment="Top">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="641*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" MinHeight="200"/>
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <DockPanel Grid.ColumnSpan="3" Grid.Row="0">
+                <Menu DockPanel.Dock="Top" IsMainMenu="True" Style="{StaticResource SysExLibMenu}">
+                    <MenuItem Header="_File" Style="{StaticResource SysExLibMenuItem}">
+                        <MenuItem Header="_Exit" InputGestureText="Ctrl+E" Click="MenuItem_Click">
+                            <MenuItem.Icon>
+                                <materialDesign:PackIcon Kind="ExitToApp" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                    </MenuItem>
+                    <MenuItem Header="_Edit">
+                        <MenuItem Header="_Rename" x:Name="RenameMenuItem" IsEnabled="False" Click="RenameMenuItem_Click">
+                            <MenuItem.Icon>
+                                <materialDesign:PackIcon Kind="RenameBox" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="_Show SysEx File" x:Name="ShowSysExFileMenuItem" IsEnabled="False" Click="ShowSysExFileMenuItem_Click">
+                            <MenuItem.Icon>
+                                <materialDesign:PackIcon Kind="FileImport" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                    </MenuItem>
+                    <MenuItem Header="_Help">
+                        <MenuItem Header="_About" x:Name="AboutMenuItem" Click="AboutMenuItem_Click"/>
+                    </MenuItem>
+                </Menu>
+            </DockPanel>
+            <ComboBox x:Name="MidiOutputComboBox" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,0,0,0" Width="400" IsReadOnly="true" materialDesign:HintAssist.Hint="Destination MIDI port" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"/>
+            <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="3" VerticalAlignment="Top">
+                <Button x:Name="SendButton" Style="{StaticResource MaterialDesignFloatingActionMiniButton}"  
+                    Margin="0 0 8 0" HorizontalAlignment="Left"
+                    ToolTip="Send">
+                    <materialDesign:PackIcon Kind="Upload" Height="24" Width="24" />
+                </Button>
+                <Button x:Name="RecordButton" Style="{StaticResource MaterialDesignFloatingActionMiniButton}"  
+                    Margin="0 0 8 0" HorizontalAlignment="Left"
+                    ToolTip="Record" Click="RecordButton_Click">
+                    <materialDesign:PackIcon Kind="Record" Height="24" Width="24" />
+                </Button>
+            </StackPanel>
+            <DataGrid x:Name="SysExFilesDataGrid" RowHeaderWidth="0" CanUserAddRows="False" Margin="10" CanUserDeleteRows="False" AutoGenerateColumns="False" 
+                  HorizontalAlignment="Left" Grid.ColumnSpan="4" Grid.Row="2" 
+                  SelectionChanged="SysExFilesListView_SelectionChanged" CellEditEnding="SysExFilesDataGrid_CellEditEnding" CurrentCellChanged="SysExFilesDataGrid_CurrentCellChanged" >
+                <DataGrid.Columns>
+                    <DataGridTextColumn Binding="{Binding FileName}" ClipboardContentBinding="{x:Null}" Header="Sysex File" Width="475"/>
+                    <DataGridTextColumn Binding="{Binding Manufacturer}" ClipboardContentBinding="{x:Null}" Header="Manufacturer" IsReadOnly="True" Width="200"/>
+                    <DataGridTextColumn Binding="{Binding Path=Size, Mode=OneWay, Converter={StaticResource FileSizeConverter}}" IsReadOnly="True" ClipboardContentBinding="{x:Null}" Header="Size" Width="*"/>
+                </DataGrid.Columns>
+            </DataGrid>
+            <StackPanel  Grid.Row="3" Grid.Column="0" Orientation="Horizontal" Margin="10 0 0 0">
+                <Button x:Name="AddFileButton" Style="{StaticResource MaterialDesignFloatingActionMiniButton}"  
+                        Margin="0 0 8 0" HorizontalAlignment="Left" Click="AddFileButton_Click"
+                        ToolTip="Add file">
+                    <materialDesign:PackIcon Kind="Plus" Height="24" Width="24" />
+                </Button>
+                <Button x:Name="RemoveFileButton" IsEnabled="False" Style="{StaticResource MaterialDesignFloatingActionMiniButton}" 
+                        Margin="0 0 8 0" HorizontalAlignment="Left" Click="RemoveFileButton_Click"
+                        ToolTip="Remove file">
+                    <materialDesign:PackIcon Kind="Minus" Height="24" Width="24" />
+                </Button>
+            </StackPanel>
+            <Button x:Name="ContentsButton" Content="Contents" HorizontalAlignment="Left" VerticalAlignment="Bottom" Grid.Row="3" Grid.Column="3" Margin="0,0,10,0" />
+        </Grid>
+    </materialDesign:DialogHost>
 </Window>

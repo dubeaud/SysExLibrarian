@@ -10,6 +10,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Data;
 using System.Windows.Controls;
+using MaterialDesignThemes.Wpf;
 
 namespace SysExLibrarian
 {
@@ -25,9 +26,9 @@ namespace SysExLibrarian
         {
             InitializeComponent();
 
-            // Load midi output dropdown with devices
-            MidiOutputComboBox.Items.Add("Select a MIDI output");
-            MidiOutputComboBox.SelectedIndex = 0;
+			// Load midi output dropdown with devices
+			//MidiOutputComboBox.Items.Add("Select a MIDI output");
+   //         MidiOutputComboBox.SelectedIndex = 0;
             for(var i = 0; i < OutputDevice.DeviceCount; i++)
             {
                 MidiOutputComboBox.Items.Add(OutputDevice.GetDeviceCapabilities(i).name);
@@ -134,7 +135,7 @@ namespace SysExLibrarian
 
         private void SysExFilesListView_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            RenameMenuItem.IsEnabled = ShowSysExFileMenuItem.IsEnabled = SysExFilesDataGrid.SelectedIndex != -1;
+            RemoveFileButton.IsEnabled = RenameMenuItem.IsEnabled = ShowSysExFileMenuItem.IsEnabled = SysExFilesDataGrid.SelectedIndex != -1;
         }
 
         private void RenameMenuItem_Click(object sender, RoutedEventArgs e)
@@ -143,10 +144,17 @@ namespace SysExLibrarian
             SysExFilesDataGrid.BeginEdit();
         }
 
-        private void AboutMenuItem_Click(object sender, RoutedEventArgs e)
+        private async void AboutMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            About about = new SysExLibrarian.About();
-            about.ShowDialog();
+            //About about = new SysExLibrarian.About();
+            //about.ShowDialog();
+            var sampleMessageDialog = new About();
+            //{
+            //    Message = { Text = "Testing 123" }
+            //};
+
+            await DialogHost.Show(sampleMessageDialog, "RootDialog");
+
         }
 
         private void SysExFilesDataGrid_CellEditEnding(object sender, System.Windows.Controls.DataGridCellEditEndingEventArgs e)
@@ -185,5 +193,20 @@ namespace SysExLibrarian
                 }
             }
         }
+
+        private void RecordButton_Click(object sender, RoutedEventArgs e)
+        {
+            //using (InputDevice inputDevice = new InputDevice(0))
+            //{
+            //    inputDevice.SysExMessageReceived += InputDevice_SysExMessageReceived;
+            //    inputDevice.StartRecording();
+            //}
+        }
+
+        //private void InputDevice_SysExMessageReceived(object sender, SysExMessageEventArgs e)
+        //{
+           
+
+        //}
     }
 }

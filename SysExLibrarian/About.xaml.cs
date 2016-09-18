@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MaterialDesignThemes.Wpf;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -20,38 +21,20 @@ namespace SysExLibrarian
     /// <summary>
     /// Interaction logic for About.xaml
     /// </summary>
-    public partial class About : Window
+    public partial class About : UserControl
     {
         public About()
         {
             InitializeComponent();
 
-            this.ShowInTaskbar = false;
-
             Assembly assembly = Assembly.GetEntryAssembly();
             Version.Content = assembly.GetName().Version.ToString();
-            Title.Content = "SysEx Librarian for Windows";
-
-            AssemblyCopyrightAttribute copyright = assembly.GetCustomAttribute<AssemblyCopyrightAttribute>();
-            AssemblyDescriptionAttribute description = assembly.GetCustomAttribute<AssemblyDescriptionAttribute>();
-            AssemblyCompanyAttribute company = assembly.GetCustomAttribute<AssemblyCompanyAttribute>();
-
-            Copyright.Text = copyright.Copyright;
-            Description.Text = description.Description;
-            //Publisher.Content = company.Company;
-
-            AdditionalNotes.Text = "Further information about ... InformationInformationInformationInformationInformationInformationInformationInformation";
         }
 
         private void Link_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
             Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
             e.Handled = true;
-        }
-
-        private void Window_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            this.Close();
         } 
     }
 }

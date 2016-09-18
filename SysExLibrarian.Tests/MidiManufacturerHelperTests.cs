@@ -6,9 +6,9 @@ namespace SysExLibrarian.Tests
 	[TestClass]
 	public class MidiManufacturerHelperTests
 	{
-		//[TestMethod]
-		//public void TestMethod1()
-		//{
-		//}
-	}
+        //[TestMethod]
+        //public void TestMethod1()
+        //{
+        //}
+    }
 }
