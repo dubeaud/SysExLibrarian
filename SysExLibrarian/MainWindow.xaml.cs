@@ -89,7 +89,7 @@ namespace SysExLibrarian
             }   
         }
 
-        private void RemoveFileButton_Click(object sender, RoutedEventArgs e)
+        private void DeleteFileMenuItem_Click(object sender, RoutedEventArgs e)
         {
             var selectedItem = SysExFilesDataGrid.SelectedItem as SysExFile;
             if (selectedItem == null)
@@ -135,7 +135,7 @@ namespace SysExLibrarian
 
         private void SysExFilesListView_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            RemoveFileButton.IsEnabled = RenameMenuItem.IsEnabled = ShowSysExFileMenuItem.IsEnabled = SysExFilesDataGrid.SelectedIndex != -1;
+            DeleteFileMenuItem.IsEnabled = RenameMenuItem.IsEnabled = ShowSysExFileMenuItem.IsEnabled = SysExFilesDataGrid.SelectedIndex != -1;
         }
 
         private void RenameMenuItem_Click(object sender, RoutedEventArgs e)
