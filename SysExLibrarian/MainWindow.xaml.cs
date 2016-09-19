@@ -19,7 +19,7 @@ namespace SysExLibrarian
     /// </summary>
     public partial class MainWindow : Window
     {
-        private ObservableCollection<SysExFile> LibraryCollection { get; set; }
+        private ObservableCollection<SysExFile> LibraryCollection { get; }
         private SysExFile rowBeingEdited = null;
 
         public MainWindow()
@@ -27,8 +27,6 @@ namespace SysExLibrarian
             InitializeComponent();
 
 			// Load midi output dropdown with devices
-			//MidiOutputComboBox.Items.Add("Select a MIDI output");
-   //         MidiOutputComboBox.SelectedIndex = 0;
             for(var i = 0; i < OutputDevice.DeviceCount; i++)
             {
                 MidiOutputComboBox.Items.Add(OutputDevice.GetDeviceCapabilities(i).name);
