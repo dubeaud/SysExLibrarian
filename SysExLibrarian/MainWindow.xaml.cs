@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.Data;
 using System.Windows.Controls;
 using MaterialDesignThemes.Wpf;
+using Serilog;
 
 namespace SysExLibrarian
 {
