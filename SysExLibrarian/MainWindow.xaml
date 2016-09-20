@@ -111,9 +111,9 @@
                             </Border>
                         </DataGridCheckBoxColumn.Header>
                     </DataGridCheckBoxColumn>
-                    <DataGridTextColumn Binding="{Binding FileName}" ClipboardContentBinding="{x:Null}" Header="Sysex File" Width="475"/>
+                    <DataGridTextColumn Binding="{Binding FileName}" ClipboardContentBinding="{x:Null}" Header="Sysex File" Width="450"/>
                     <DataGridTextColumn Binding="{Binding Manufacturer}" ClipboardContentBinding="{x:Null}" Header="Manufacturer" IsReadOnly="True" Width="180"/>
-                    <DataGridTextColumn Binding="{Binding Path=Size, Mode=OneWay, Converter={StaticResource FileSizeConverter}}" IsReadOnly="True" ClipboardContentBinding="{x:Null}" Header="Size" Width="*"/>
+                    <DataGridTextColumn Binding="{Binding Path=Size, Mode=OneWay, Converter={StaticResource FileSizeConverter}}" IsReadOnly="True" ClipboardContentBinding="{x:Null}" Header="Size (kb)" Width="*"/>
                 </DataGrid.Columns>
             </DataGrid>
             <materialDesign:PopupBox Style="{StaticResource MaterialDesignMultiFloatingActionPopupBox}" Grid.Row="2" Grid.Column="1" 
