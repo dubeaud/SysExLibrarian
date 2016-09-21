@@ -57,7 +57,7 @@
 
         private void AddFileButton_Click(object sender, RoutedEventArgs e)
         {
-            Log.Debug("Add file selected");
+            Log.Debug("Event => AddFileButton_Click");
 
             var openFileDialog = new OpenFileDialog()
             {
@@ -107,11 +107,15 @@
 
         private void DeleteFileMenuItem_Click(object sender, RoutedEventArgs e)
         {
+            Log.Debug("Event =>  DeleteFileMenuItem_Click");
+
             var selectedItem = SysExFilesDataGrid.SelectedItem as SysExFile;
             if (selectedItem == null)
             {
                 return;
             }
+
+            Log.Debug("Selected {@SysExFile}");
 
             LibraryCollection.Remove(selectedItem);
 
@@ -125,11 +129,15 @@
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
+            Log.Debug("Event => MenuItem_Click");
+
             Application.Current.Shutdown();
         }
 
         private void ShowSysExFileMenuItem_Click(object sender, RoutedEventArgs e)
         {
+            Log.Debug("Event => ShowSysExFileMenuItem_Click");
+
             var selectedItem = SysExFilesDataGrid.SelectedItem as SysExFile;
             if (selectedItem == null)
             {
@@ -153,28 +161,41 @@
 
         private void SysExFilesListView_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
+            Log.Debug("Event => SysExFilesListView_SelectionChanged");
+
             DeleteFileMenuItem.IsEnabled = RenameMenuItem.IsEnabled = ShowSysExFileMenuItem.IsEnabled = SysExFilesDataGrid.SelectedIndex != -1;
         }
 
         private void RenameMenuItem_Click(object sender, RoutedEventArgs e)
         {
+            Log.Debug("Event => RenameMenuItem_Click");
+
             SysExFilesDataGrid.CurrentCell = new DataGridCellInfo(SysExFilesDataGrid.SelectedItem, SysExFilesDataGrid.Columns[0]);
             SysExFilesDataGrid.BeginEdit();
         }
 
         private async void AboutMenuItem_Click(object sender, RoutedEventArgs e)
         {
+            Log.Debug("Event => AboutMenuItem_Click");
+
             await DialogHost.Show(new About(), "RootDialog");
         }
 
         private void SysExFilesDataGrid_CellEditEnding(object sender, System.Windows.Controls.DataGridCellEditEndingEventArgs e)
         {
+            Log.Debug("Event => SysExFilesDataGrid_CellEditEnding");
+
             var currentSysExFile = e.Row.Item as SysExFile;
+
+            Log.Debug("Editing {@CurrentSysExFile}", currentSysExFile);
+
             rowBeingEdited = currentSysExFile;
         }
 
         private void SysExFilesDataGrid_CurrentCellChanged(object sender, EventArgs e)
         {
+            Log.Debug("Event => SysExFilesDataGrid_CurrentCellChanged");
+
             if (rowBeingEdited == null)
             {
                 return;
