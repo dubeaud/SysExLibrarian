@@ -71,6 +71,8 @@
             Moog = 0x04,
             [Description("Alesis")]
             Alesis = 0x00E,
+            [Description("Clavia Digital Instruments")]
+            Clavia = 0x33,
             [Description("Kawai")]
             Kawai = 0x40,
             [Description("Roland")]

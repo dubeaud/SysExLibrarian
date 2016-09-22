@@ -11,6 +11,8 @@ using System.Diagnostics;
 using System.Data;
 using System.Windows.Controls;
 using MaterialDesignThemes.Wpf;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace SysExLibrarian
 {
@@ -21,13 +23,14 @@ namespace SysExLibrarian
     {
         private ObservableCollection<SysExFile> LibraryCollection { get; set; }
         private SysExFile rowBeingEdited = null;
+        private List<InputDevice> recordingInputDevices = null;
 
         public MainWindow()
         {
             InitializeComponent();
 
-			// Load midi output dropdown with devices
-			//MidiOutputComboBox.Items.Add("Select a MIDI output");
+            // Load midi output dropdown with devices
+            //MidiOutputComboBox.Items.Add("Select a MIDI output");
    //         MidiOutputComboBox.SelectedIndex = 0;
             for(var i = 0; i < OutputDevice.DeviceCount; i++)
             {
@@ -140,21 +143,14 @@ namespace SysExLibrarian
 
         private void RenameMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            SysExFilesDataGrid.CurrentCell = new DataGridCellInfo(SysExFilesDataGrid.SelectedItem, SysExFilesDataGrid.Columns[0]);
+            SysExFilesDataGrid.CurrentCell = new DataGridCellInfo(SysExFilesDataGrid.SelectedItem, SysExFilesDataGrid.Columns[1]);
             SysExFilesDataGrid.BeginEdit();
         }
 
         private async void AboutMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            //About about = new SysExLibrarian.About();
-            //about.ShowDialog();
-            var sampleMessageDialog = new About();
-            //{
-            //    Message = { Text = "Testing 123" }
-            //};
-
-            await DialogHost.Show(sampleMessageDialog, "RootDialog");
-
+            var aboutDialog = new About();
+            await DialogHost.Show(aboutDialog, "RootDialog");
         }
 
         private void SysExFilesDataGrid_CellEditEnding(object sender, System.Windows.Controls.DataGridCellEditEndingEventArgs e)
@@ -194,19 +190,100 @@ namespace SysExLibrarian
             }
         }
 
-        private void RecordButton_Click(object sender, RoutedEventArgs e)
+        private async void RecordButton_Click(object sender, RoutedEventArgs e)
         {
-            //using (InputDevice inputDevice = new InputDevice(0))
-            //{
-            //    inputDevice.SysExMessageReceived += InputDevice_SysExMessageReceived;
-            //    inputDevice.StartRecording();
-            //}
+            try
+            {
+                if(InputDevice.DeviceCount == 0)
+                {
+                    var messageDialog = new MessageDialog();
+                    messageDialog.Message.Text = "You need at least one MIDI input device connected to record.";
+                    await DialogHost.Show(new ProgressDialog(), "RootDialog");
+                    return;
+                }
+            
+                recordingInputDevices = new List<InputDevice>();
+
+                for (var i = 0; i < InputDevice.DeviceCount; i++)
+                {
+                    InputDevice inputDevice = new InputDevice(i);
+                    inputDevice.SysExMessageReceived += InputDevice_SysExMessageReceived;
+                    inputDevice.StartRecording();
+
+                    recordingInputDevices.Add(inputDevice);
+                }
+
+                await DialogHost.Show(new ProgressDialog(), "RootDialog", RecordingCanceled_ClosingEventHandler);
+
+                // stop recording on all devices and dispose of the resources
+                foreach (var inputDevice in recordingInputDevices)
+                {
+                    inputDevice.StopRecording();
+                    inputDevice.Dispose();
+                }
+
+                recordingInputDevices = null;
+            }
+            catch (InputDeviceException ex)
+            {
+                MessageBox.Show(ex.Message);
+            }    
         }
 
-        //private void InputDevice_SysExMessageReceived(object sender, SysExMessageEventArgs e)
-        //{
-           
+        private void RecordingCanceled_ClosingEventHandler(object sender, DialogClosingEventArgs eventArgs)
+        {
+            var result = Convert.ToBoolean(eventArgs.Parameter);
+            if (eventArgs.Session.Content is ProgressDialog && !result)
+            { 
+                // cancel the close
+                eventArgs.Cancel();
 
-        //}
+                // update
+                eventArgs.Session.UpdateContent(new SysExMessageReceivedDialog());
+            }
+        }
+
+        private void InputDevice_SysExMessageReceived(object sender, SysExMessageEventArgs e)
+        {
+            DialogHost.CloseDialogCommand.Execute(null, null);
+
+            // get our recorded message
+            var message = e.Message as SysExMessage;
+
+            // save it to disk in a new file
+            try
+            {
+                var sysExLibrarianFolder = $"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\\SysEx Librarian";
+                var filePath = $"{sysExLibrarianFolder}\\NewFile_{DateTime.Now.ToString("yyyy_dd_M_HH_mm_ss")}.syx"; 
+                File.WriteAllBytes(filePath, message.GetBytes());
+
+                // add file to library database
+                using (var db = new LiteDatabase(@"MyData.db"))
+                {
+                    // Get files collection
+                    var files = db.GetCollection<SysExFile>("SysExFiles");
+
+                    FileInfo fi = new FileInfo(filePath);
+                    var sysExFile = new SysExFile()
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        FileName = Path.GetFileName(filePath),
+                        DiskLocation = filePath,
+                        Manufacturer = Helpers.MidiManufacturerHelper.GetMidiManufacturerFromSysExFile(filePath),
+                        Size = fi.Length
+                    };
+
+                    files.Insert(sysExFile);
+
+                    this.LibraryCollection.Add(sysExFile);
+                }
+            }
+            catch (Exception ex)
+            {
+                // todo: log this
+                // display material design dialog
+                MessageBox.Show(ex.Message);
+            }
+        }
     }
 }

@@ -1,0 +1,29 @@
+﻿<UserControl x:Class="SysExLibrarian.ProgressDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:SysExLibrarian"
+             xmlns:system="clr-namespace:System;assembly=mscorlib"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d" 
+             d:DesignHeight="250" d:DesignWidth="400">
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <ProgressBar Width="24" Height="24" Margin="16" VerticalAlignment="Center"
+                     Style="{DynamicResource MaterialDesignCircularProgressBar}"
+                     IsIndeterminate="True"
+                     Value="33"/>
+        <Button IsCancel="True" Margin="8 0 0 0" Style="{DynamicResource MaterialDesignFlatButton}" HorizontalAlignment="Center" Grid.Row="1"
+                    Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}">
+            <Button.CommandParameter>
+                <system:Boolean>True</system:Boolean>
+            </Button.CommandParameter>
+            CANCEL
+        </Button>
+    </Grid>
+</UserControl>
