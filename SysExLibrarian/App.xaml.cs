@@ -6,6 +6,8 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Diagnostics;
+using Serilog;
 
 namespace SysExLibrarian
 {
@@ -16,7 +18,16 @@ namespace SysExLibrarian
     {
         protected override void OnStartup(StartupEventArgs e)
         {
+            
             base.OnStartup(e);
+
+            // configure logging
+            Log.Logger = new LoggerConfiguration()
+              .MinimumLevel.Debug()
+              .WriteTo.File("debug.log")
+              .CreateLogger();
+
+            Log.Information("Application started");
 
             // set initial preferences
             if (string.IsNullOrEmpty(Settings.Default.SysExLibrarianFolder))
@@ -25,7 +36,16 @@ namespace SysExLibrarian
                 System.IO.Directory.CreateDirectory(sysExLibrarianFolder);
                 Settings.Default.SysExLibrarianFolder = sysExLibrarianFolder;
                 Settings.Default.Save();
-            }
+
+				Log.Information("Created library {Folder}", sysExLibrarianFolder);
+			}
+        }
+
+        protected override void OnExit(ExitEventArgs e)
+        {
+            base.OnExit(e);
+
+            Log.Information("Application shutdown");
         }
     }
 }

@@ -17,8 +17,7 @@ namespace SysExLibrarian.Extensions
             DescriptionAttribute[] attributes = (DescriptionAttribute[])fi.GetCustomAttributes(
                 typeof(DescriptionAttribute), false);
 
-            if (attributes != null && attributes.Length > 0) return attributes[0].Description;
-            else return source.ToString();
+            return attributes.Length > 0 ? attributes[0].Description : source.ToString();
         }
     }
 }

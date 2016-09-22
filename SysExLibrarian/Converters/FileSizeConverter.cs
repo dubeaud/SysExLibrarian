@@ -19,7 +19,7 @@
                 ++unit;
             }
 
-            return String.Format("{0:0.#} {1}", size, units[unit]);
+            return string.Format("{0:0.#} {1}", size, units[unit]);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
