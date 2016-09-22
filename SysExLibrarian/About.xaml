@@ -23,11 +23,9 @@
         </Grid.RowDefinitions>
 
         <!-- Logo and Title -->
-        <Image x:Name="ApplicationLogo"
-				   Grid.Row="0" Margin="0 25 0 0 "
-				   Width="115"
+        <materialDesign:PackIcon Kind="MusicCircle" Grid.Row="0" Margin="0 25 0 0"
+				   Width="115" HorizontalAlignment="Center" Foreground="#5A91BA"
 				   Height="115" />
-
         <Label x:Name="Title"
 				   Grid.Column="0"
 				   Grid.Row="1" Margin="0 15 0 0" HorizontalAlignment="Center"
