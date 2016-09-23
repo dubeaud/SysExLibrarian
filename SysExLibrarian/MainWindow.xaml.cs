@@ -93,8 +93,9 @@
                         Id = Guid.NewGuid().ToString(),
                         FileName = Path.GetFileName(filename),
                         DiskLocation = Path.GetFullPath(filename),
-                        Manufacturer = SysExLibrarian.Helpers.MidiManufacturerHelper.GetMidiManufacturerFromSysExFile(filename),
-                        Size = fi.Length
+                        Manufacturer = Helpers.MidiManufacturerHelper.GetMidiManufacturerFromSysExFile(filename),
+                        Size = fi.Length,
+                        LastModifiedDateTime = fi.LastWriteTime
                     };
 
                     files.Insert(sysExFile);
@@ -164,7 +165,7 @@
         {
             Log.Debug("Event => SysExFilesListView_SelectionChanged");
 
-            DeleteFileMenuItem.IsEnabled = RenameMenuItem.IsEnabled = ShowSysExFileMenuItem.IsEnabled = SysExFilesDataGrid.SelectedIndex != -1;
+            DeleteFileMenuItem.IsEnabled = ShowContentsMenuItem.IsEnabled = RenameMenuItem.IsEnabled = ShowSysExFileMenuItem.IsEnabled = SysExFilesDataGrid.SelectedIndex != -1;
         }
 
         private void RenameMenuItem_Click(object sender, RoutedEventArgs e)
@@ -237,11 +238,13 @@
         {
             try
             {
-                if(InputDevice.DeviceCount == 0)
+                if (InputDevice.DeviceCount == 0)
                 {
-                    var messageDialog = new MessageDialog();
-                    messageDialog.Message.Text = "You need at least one MIDI input device connected to record.";
-                    await DialogHost.Show(new ProgressDialog(), "RootDialog");
+                    var messageDialog = new MessageDialog
+                    {
+                        Message = { Text = "You need at least one MIDI input device connected to record."}
+                    };
+                    await DialogHost.Show(messageDialog, "RootDialog");
                     return;
                 }
             
@@ -249,7 +252,7 @@
 
                 for (var i = 0; i < InputDevice.DeviceCount; i++)
                 {
-                    InputDevice inputDevice = new InputDevice(i);
+                    var inputDevice = new InputDevice(i);
                     inputDevice.SysExMessageReceived += InputDevice_SysExMessageReceived;
                     inputDevice.StartRecording();
 
@@ -269,7 +272,13 @@
             }
             catch (InputDeviceException ex)
             {
-                MessageBox.Show(ex.Message);
+                Log.Error(ex, "An error occurred when recording");
+
+                var messageDialog = new MessageDialog
+                {
+                    Message = { Text = ex.Message }
+                };
+                await DialogHost.Show(messageDialog, "RootDialog");
             }    
         }
 
@@ -281,19 +290,19 @@
                 // cancel the close
                 eventArgs.Cancel();
 
-                // update
+                // update the dialog to notify the user we got a message
                 eventArgs.Session.UpdateContent(new SysExMessageReceivedDialog());
             }
         }
 
-        private void InputDevice_SysExMessageReceived(object sender, SysExMessageEventArgs e)
+        private async void InputDevice_SysExMessageReceived(object sender, SysExMessageEventArgs e)
         {
             DialogHost.CloseDialogCommand.Execute(null, null);
 
             // get our recorded message
-            var message = e.Message as SysExMessage;
+            var message = e.Message;
 
-            // save it to disk in a new file
+            // save our recoreded sysex message to disk in a new file and add it to the library
             try
             {
                 var sysExLibrarianFolder = $"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\\SysEx Librarian";
@@ -306,27 +315,39 @@
                     // Get files collection
                     var files = db.GetCollection<SysExFile>("SysExFiles");
 
-                    FileInfo fi = new FileInfo(filePath);
+                    var fi = new FileInfo(filePath);
                     var sysExFile = new SysExFile()
                     {
                         Id = Guid.NewGuid().ToString(),
                         FileName = Path.GetFileName(filePath),
                         DiskLocation = filePath,
                         Manufacturer = Helpers.MidiManufacturerHelper.GetMidiManufacturerFromSysExFile(filePath),
-                        Size = fi.Length
+                        Size = fi.Length,
+                        LastModifiedDateTime = fi.LastWriteTime
                     };
 
                     files.Insert(sysExFile);
+
+                    Log.Debug("Inserted file {@SysExFile}", sysExFile);
 
                     this.LibraryCollection.Add(sysExFile);
                 }
             }
             catch (Exception ex)
             {
-                // todo: log this
-                // display material design dialog
-                MessageBox.Show(ex.Message);
+                Log.Error(ex, "An error occurred when receiving a sysex message");
+                
+                var messageDialog = new MessageDialog
+                {
+                    Message = { Text = ex.Message }
+                };
+                await DialogHost.Show(messageDialog, "RootDialog");
             }
+        }
+
+        private void ShowContentsMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            Log.Debug("Event => ShowContentsMenuItem_Click");
         }
     }
 }

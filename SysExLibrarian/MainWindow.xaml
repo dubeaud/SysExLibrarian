@@ -73,7 +73,7 @@
                                 <materialDesign:PackIcon Kind="FileImport" />
                             </MenuItem.Icon>
                         </MenuItem>
-                        <MenuItem Header="_Show Contents">
+						<MenuItem Header="_Show Contents" x:Name="ShowContentsMenuItem" IsEnabled="False" Click="ShowContentsMenuItem_Click">
                             <MenuItem.Icon>
                                 <materialDesign:PackIcon Kind="File" />
                             </MenuItem.Icon>
@@ -83,8 +83,8 @@
                         <MenuItem.Icon>
                             <materialDesign:PackIcon Kind="Settings"  />
                         </MenuItem.Icon>
-                        <!--<MenuItem Header="_Options..." x:Name="OptionsMenuItem" />-->
-                        <MenuItem Header="_About SysEx Librarian" x:Name="AboutMenuItem" Click="AboutMenuItem_Click"/>
+						<MenuItem Header="_Options..." x:Name="OptionsMenuItem" />
+						<MenuItem Header="_About SysEx Librarian" x:Name="AboutMenuItem" Click="AboutMenuItem_Click"/>
                     </MenuItem>
                 </Menu>
             </DockPanel>
@@ -111,9 +111,10 @@
                             </Border>
                         </DataGridCheckBoxColumn.Header>
                     </DataGridCheckBoxColumn>
-                    <DataGridTextColumn Binding="{Binding FileName}" ClipboardContentBinding="{x:Null}" Header="Sysex File" Width="450"/>
-                    <DataGridTextColumn Binding="{Binding Manufacturer}" ClipboardContentBinding="{x:Null}" Header="Manufacturer" IsReadOnly="True" Width="180"/>
-                    <DataGridTextColumn Binding="{Binding Path=Size, Mode=OneWay, Converter={StaticResource FileSizeConverter}}" IsReadOnly="True" ClipboardContentBinding="{x:Null}" Header="Size (kb)" Width="*"/>
+                    <DataGridTextColumn Binding="{Binding FileName}" ClipboardContentBinding="{x:Null}" Header="Sysex File" Width="*"/>
+                    <DataGridTextColumn Binding="{Binding Manufacturer}" ClipboardContentBinding="{x:Null}" Header="Manufacturer" IsReadOnly="True" Width="200"/>
+                    <DataGridTextColumn Binding="{Binding Path=Size, Mode=OneWay, Converter={StaticResource FileSizeConverter}}" IsReadOnly="True" ClipboardContentBinding="{x:Null}" Header="Size (kB)" Width="130"/>
+					<DataGridTextColumn Binding="{Binding LastModifieDateTime, StringFormat=d}" IsReadOnly="True" Header="Last Modified" Width="120"/>
                 </DataGrid.Columns>
             </DataGrid>
             <materialDesign:PopupBox Style="{StaticResource MaterialDesignMultiFloatingActionPopupBox}" Grid.Row="2" Grid.Column="1" 

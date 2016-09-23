@@ -17,5 +17,7 @@ namespace SysExLibrarian.Models
         public string Manufacturer { get; set; }
 
         public long Size { get; set; }
+
+        public DateTime LastModifiedDateTime { get; set; }
     }
 }

@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:SysExLibrarian"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300" MaxWidth="400">
+             d:DesignHeight="300" d:DesignWidth="300" MaxWidth="450">
     <Grid Margin="16">
         <Grid.RowDefinitions>
             <RowDefinition />
