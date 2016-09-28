@@ -56,7 +56,7 @@
 
         private ObservableCollection<SysExFile> LibraryCollection { get; }
 
-        private void AddFileButton_Click(object sender, RoutedEventArgs e)
+        private async void AddFileButton_Click(object sender, RoutedEventArgs e)
         {
             Log.Debug("Event => AddFileButton_Click");
 
@@ -83,7 +83,11 @@
                     if(files.Exists(f => f.FileName == Path.GetFileName(filename) && f.DiskLocation == filename))
                     {
                         Log.Warning("File {FileName} already exists in library.", filename);
-                        MessageBox.Show($"The file \"{Path.GetFileName(filename)}\" already exists in your library and will not be added.", "File Exists", MessageBoxButton.OK, MessageBoxImage.Information);
+                        var messageDialog = new MessageDialog
+                        {
+                            Message = { Text = $"The file \"{Path.GetFileName(filename)}\" already exists in your library and will not be added." }
+                        };
+                        await DialogHost.Show(messageDialog, "RootDialog");
                         continue;
                     }
 
@@ -348,6 +352,10 @@
         private void ShowContentsMenuItem_Click(object sender, RoutedEventArgs e)
         {
             Log.Debug("Event => ShowContentsMenuItem_Click");
+
+            var pref = new Preferences();
+            App.Current.MainWindow = pref;
+    
         }
     }
 }
